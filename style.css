@@ -9,7 +9,7 @@
     --font-headings: 'Orbitron', sans-serif;
     --font-body: 'Roboto', sans-serif;
 }
- 
+
 /* --- Global Styles --- */
 * {
     margin: 0;
@@ -319,7 +319,7 @@ body {
 
 /* --- Product Grid --- */
 .product-grid {
-    padding: 3rem 5%;
+    padding: 3rem 0; /* Changed padding to 0 on left/right */
 }
 
 .grid-title {
@@ -330,11 +330,39 @@ body {
     color: var(--primary-purple);
 }
 
+/* UPDATED: This is now a horizontal scroller */
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-auto-flow: column; /* This is the magic! */
+    grid-auto-columns: 280px; /* Each card is 280px wide */
+    
     gap: 1.5rem;
+    overflow-x: auto; /* Enable horizontal scroll */
+
+    /* Add padding so the cards don't touch the screen edge */
+    padding: 0.5rem 5%; 
+    padding-bottom: 2rem; /* Space for the scrollbar */
+
+    /* Makes scrolling feel better on touch devices */
+    scroll-snap-type: x mandatory; 
 }
+
+/* NEW: Custom Scrollbar for Webkit browsers (Chrome, Safari) */
+.grid-container::-webkit-scrollbar {
+    height: 10px; /* Height of the scrollbar */
+}
+.grid-container::-webkit-scrollbar-track {
+    background: var(--bg-dark-purple); /* Track color */
+    border-radius: 5px;
+}
+.grid-container::-webkit-scrollbar-thumb {
+    background-color: var(--primary-purple); /* Handle color */
+    border-radius: 5px;
+}
+.grid-container::-webkit-scrollbar-thumb:hover {
+    background-color: var(--secondary-green); /* Handle hover color */
+}
+
 
 /* --- Product Card --- */
 .product-card {
@@ -345,6 +373,11 @@ body {
     box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
+    
+    width: 280px; /* Explicitly set width to match grid-auto-columns */
+
+    /* Snap to the start of the card when scrolling */
+    scroll-snap-align: start; 
 }
 
 .product-card:hover {
@@ -692,7 +725,7 @@ body {
 
 
 /* --- Responsive Media Queries --- */
-@media (max-width: 768px) { /* UPDATED: This is the new tablet breakpoint */
+@media (max-width: 768px) { /* This is the tablet breakpoint */
     
     /* Hide desktop links, show hamburger */
     .nav-links {

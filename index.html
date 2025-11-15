@@ -21,8 +21,8 @@
     <!-- Header -->
     <nav class="navbar">
         <a href="#" class="nav-logo">Cyber-Core</a>
- 
-        <!-- NEW: Hamburger Icon (Mobile Only) -->
+
+        <!-- Hamburger Icon (Mobile Only) -->
         <div class="hamburger-icon" id="hamburger-icon">
             <i class="fas fa-bars"></i>
         </div>
@@ -31,13 +31,12 @@
         <div class="nav-links">
             <a href="#">Home</a>
             <a href="#">Skins</a>
-            <!-- Search Icon has been MOVED -->
             <a href="#">Gamepasses</a>
             <a href="#">Pets</a>
         </div>
 
         <div class="nav-icons">
-            <!-- UPDATED: Search Icon now lives here -->
+            <!-- Search Icon -->
             <i class="fas fa-search" id="nav-search-icon"></i> 
             
             <div class="nav-icon-wrapper" id="cart-icon-wrapper">
@@ -47,7 +46,7 @@
         </div>
     </nav>
 
-    <!-- NEW: Mobile Menu Overlay -->
+    <!-- Mobile Menu Overlay -->
     <div class="mobile-menu-overlay" id="mobile-menu">
         <button class="modal-close" id="mobile-menu-close">&times;</button>
         <div class="mobile-links">
@@ -79,6 +78,8 @@
         <!-- Featured Products -->
         <main class="product-grid" id="featured">
             <h2 class="grid-title">Featured Items</h2>
+
+            <!-- UPDATED: The grid-container is now a scrolling carousel -->
             <div class="grid-container">
                 
                 <!-- Product Card 1 -->
@@ -141,6 +142,46 @@
                     </div>
                 </div>
 
+                <!-- NEW: Product Card 4 -->
+                <div class="product-card"
+                     data-id="goggles-004"
+                     data-title="Cyber Goggles"
+                     data-category="Accessory"
+                     data-price="R$ 650"
+                     data-image-url="https://via.placeholder.com/100x100/39FF14/1A1A1A?text=Goggles"
+                     data-description="See the world in code. These animated goggles give your avatar a high-tech scanning effect.">
+                    
+                    <div class="product-image" style="background-image: url('https://via.placeholder.com/300x250/39FF14/1A1A1A?text=Product+Image'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3 class="product-title">Cyber Goggles</h3>
+                        <p class="product-category">Accessory</p>
+                        <div class="product-footer">
+                            <span class="product-price">R$ 650</span>
+                            <button class="add-to-cart-btn">Add <i class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEW: Product Card 5 -->
+                <div class="product-card"
+                     data-id="blade-005"
+                     data-title="Glitch Blade"
+                     data-category="Weapon Skin"
+                     data-price="R$ 950"
+                     data-image-url="https://via.placeholder.com/100x100/8A2BE2/FFFFFF?text=Blade"
+                     data-description="This unstable blade phases in and out of reality. Features a custom particle trail and sound effect.">
+                    
+                    <div class="product-image" style="background-image: url('https://via.placeholder.com/300x250/8A2BE2/FFFFFF?text=Product+Image'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3 class="product-title">Glitch Blade</h3>
+                        <p class="product-category">Weapon Skin</p>
+                        <div class="product-footer">
+                            <span class="product-price">R$ 950</span>
+                            <button class="add-to-cart-btn">Add <i class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
+                </div>
+
             </div> <!-- .grid-container -->
         </main> <!-- .product-grid -->
 
@@ -195,7 +236,7 @@
                 <div class="cart-empty active" id="cart-empty">
                     <i class="fas fa-shopping-bag"></i>
                     <p>Your cart is empty.</p>
-                </div> 
+                </div>
                 <!-- Cart items will be injected here by app.js -->
             </div>
             

@@ -6,7 +6,7 @@
     3. Shopping Cart Sidebar
     4. Global Listeners
 */
- 
+
 document.addEventListener('DOMContentLoaded', () => {
 
     console.log("Cyber-Core App Initialized");
@@ -266,7 +266,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === cartOverlay) closeCart();
     });
 
-    addToCartButtons.forEach(button => {
+    // IMPORTANT: Re-run the query to find the new buttons!
+    const allAddToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+    allAddToCartButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             e.stopPropagation(); 
             const card = e.target.closest('.product-card');
