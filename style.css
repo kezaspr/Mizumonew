@@ -37,10 +37,14 @@ body {
     background: rgba(0, 0, 0, 0.3);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--primary-purple);
+    
+    /* UPDATED: This now correctly fixes the navbar to the top */
     position: sticky;
     top: 0;
+    width: 100%; /* Ensures it spans the full width */
+    
     z-index: 1000;
-    position: relative;
+    /* Removed conflicting 'position: relative;' */
 }
 
 .nav-logo {
