@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber-Core Marketplace</title>
+    <!-- UPDATED: Title -->
+    <title>Mizumo Marketplace</title>
     
     <!-- Link to your stylesheet -->
     <link rel="stylesheet" href="style.css">
@@ -20,7 +21,8 @@
 
     <!-- Header -->
     <nav class="navbar">
-        <a href="#" class="nav-logo">Cyber-Core</a>
+        <!-- UPDATED: Logo -->
+        <a href="#" class="nav-logo">Mizumo</a>
 
         <!-- Hamburger Icon (Mobile Only) -->
         <div class="hamburger-icon" id="hamburger-icon">
@@ -61,7 +63,7 @@
     <div class="search-slide-down" id="search-slide-down">
         <div class="search-slide-content">
             <i class="fas fa-search search-icon-large"></i>
-            <input type="text" id="slide-search-input" placeholder="Search for katanas, pets, gamepasses...">
+            <input type="text" id="slide-search-input" placeholder="Search for items...">
         </div>
     </div>
 
@@ -70,7 +72,8 @@
 
         <!-- Hero Section -->
         <header class="hero">
-            <h1>Welcome to Cyber-Core</h1>
+            <!-- UPDATED: Title -->
+            <h1>Welcome to Mizumo</h1>
             <p>The #1 marketplace for exclusive Roblox assets. Instantly level up your game with our futuristic items, delivered instantly.</p>
             <a href="#featured" class="cta-button">Shop Featured Items</a>
         </header>
@@ -79,8 +82,8 @@
         <main class="product-grid" id="featured">
             <h2 class="grid-title">Featured Items</h2>
 
-            <!-- UPDATED: The grid-container is now a scrolling carousel -->
-            <div class="grid-container">
+            <!-- UPDATED: This container is now the horizontal scroller -->
+            <div class="scroll-container">
                 
                 <!-- Product Card 1 -->
                 <div class="product-card" 
@@ -142,7 +145,7 @@
                     </div>
                 </div>
 
-                <!-- NEW: Product Card 4 -->
+                <!-- Product Card 4 -->
                 <div class="product-card"
                      data-id="goggles-004"
                      data-title="Cyber Goggles"
@@ -162,7 +165,7 @@
                     </div>
                 </div>
 
-                <!-- NEW: Product Card 5 -->
+                <!-- Product Card 5 -->
                 <div class="product-card"
                      data-id="blade-005"
                      data-title="Glitch Blade"
@@ -177,6 +180,138 @@
                         <p class="product-category">Weapon Skin</p>
                         <div class="product-footer">
                             <span class="product-price">R$ 950</span>
+                            <button class="add-to-cart-btn">Add <i class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- .scroll-container -->
+        </main> <!-- .product-grid -->
+
+
+        <!-- NEW: "All Items" Section -->
+        <main class="product-grid" id="all-items">
+            <h2 class="grid-title">All Items</h2>
+
+            <!-- This is the standard wrapping grid -->
+            <div class="grid-container">
+
+                <!-- All Items Card 1 -->
+                <div class="product-card"
+                     data-id="aura-006"
+                     data-title="Energy Aura"
+                     data-category="Effect"
+                     data-price="R$ 500"
+                     data-image-url="https://via.placeholder.com/100x100/8A2BE2/FFFFFF?text=Aura"
+                     data-description="Surround yourself with a crackling purple energy field. A constant, stylish effect.">
+                    
+                    <div class="product-image" style="background-image: url('https://via.placeholder.com/300x250/8A2BE2/FFFFFF?text=Product+Image'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3 class="product-title">Energy Aura</h3>
+                        <p class="product-category">Effect</p>
+                        <div class="product-footer">
+                            <span class="product-price">R$ 500</span>
+                            <button class="add-to-cart-btn">Add <i class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Items Card 2 -->
+                <div class="product-card"
+                     data-id="jetpack-007"
+                     data-title="Cyber Jetpack"
+                     data-category="Accessory"
+                     data-price="R$ 2,500"
+                     data-image-url="https://via.placeholder.com/100x100/39FF14/1A1A1A?text=Jetpack"
+                     data-description="A sleek, neon-green jetpack with custom flight particles. Also provides a double-jump ability in supported games.">
+                    
+                    <div class="product-image" style="background-image: url('https://via.placeholder.com/300x250/39FF14/1A1A1A?text=Product+Image'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3 class="product-title">Cyber Jetpack</h3>
+                        <p class="product-category">Accessory</p>
+                        <div class="product-footer">
+                            <span class="product-price">R$ 2,500</span>
+                            <button class="add-to-cart-btn">Add <i class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Items Card 3 -->
+                <div class="product-card"
+                     data-id="boombox-008"
+                     data-title="Holo-Boombox"
+                     data-category="Gear"
+                     data-price="R$ 750"
+                     data-image-url="https://via.placeholder.com/100x100/8A2BE2/FFFFFF?text=Boombox"
+                     data-description="A portable boombox that plays your favorite Roblox audio. This skin features a holographic visualizer.">
+                    
+                    <div class="product-image" style="background-image: url('https://via.placeholder.com/300x250/8A2BE2/FFFFFF?text=Product+Image'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3 class="product-title">Holo-Boombox</h3>
+                        <p class="product-category">Gear</p>
+                        <div class="product-footer">
+                            <span class="product-price">R$ 750</span>
+                            <button class="add-to-cart-btn">Add <i class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- We can re-use items from the carousel, which is common -->
+                <!-- All Items Card 4 (Re-used from featured) -->
+                <div class="product-card" 
+                     data-id="katana-001"
+                     data-title="Neon Katana"
+                     data-category="Weapon Skin"
+                     data-price="R$ 800"
+                     data-image-url="https://via.placeholder.com/100x100/8A2BE2/FFFFFF?text=Katana"
+                     data-description="A limited edition katana forged from pure cyber-energy. This item grants a unique glow effect and a custom swing animation.">
+                    
+                    <div class="product-image" style="background-image: url('https://via.placeholder.com/300x250/8A2BE2/FFFFFF?text=Product+Image'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3 class="product-title">Neon Katana</h3>
+                        <p class="product-category">Weapon Skin</p>
+                        <div class="product-footer">
+                            <span class="product-price">R$ 800</span>
+                            <button class="add-to-cart-btn">Add <i class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Items Card 5 (Re-used from featured) -->
+                <div class="product-card"
+                     data-id="pet-002"
+                     data-title="Cyber Pet"
+                     data-category="Pet"
+                     data-price="R$ 1,200"
+                     data-image-url="https://via.placeholder.com/100x100/39FF14/1A1A1A?text=Pet"
+                     data-description="A loyal companion from the digital frontier. Provides a speed boost and auto-collects loot for you.">
+                    
+                    <div class="product-image" style="background-image: url('https://via.placeholder.com/300x250/39FF14/1A1A1A?text=Product+Image'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3 class="product-title">Cyber Pet</h3>
+                        <p class="product-category">Pet</p>
+                        <div class="product-footer">
+                            <span class="product-price">R$ 1,200</span>
+                            <button class="add-to-cart-btn">Add <i class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Items Card 6 (Re-used from featured) -->
+                <div class="product-card"
+                     data-id="pass-003"
+                     data-title="VIP Gamepass"
+                     data-category="Gamepass"
+                     data-price="R$ 1,500"
+                     data-image-url="https://via.placeholder.com/100x100/8A2BE2/FFFFFF?text=VIP"
+                     data-description="Unlock exclusive access to the VIP lounge, a unique chat tag, a daily R$ bonus, and a 2x R$ multiplier.">
+                    
+                    <div class="product-image" style="background-image: url('https://via.placeholder.com/300x250/8A2BE2/FFFFFF?text=Product+Image'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3 class="product-title">VIP Gamepass</h3>
+                        <p class="product-category">Gamepass</p>
+                        <div class="product-footer">
+                            <span class="product-price">R$ 1,500</span>
                             <button class="add-to-cart-btn">Add <i class="fas fa-shopping-cart"></i></button>
                         </div>
                     </div>

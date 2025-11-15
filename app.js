@@ -1,15 +1,16 @@
-/* Cyber-Core Marketplace App
+/* Mizumo Marketplace App
     Contains logic for:
     1. Product Detail Modal
     2. Slide-Down Search
-    2.5. Mobile Hamburger Menu (NEW)
+    2.5. Mobile Hamburger Menu
     3. Shopping Cart Sidebar
     4. Global Listeners
 */
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    console.log("Cyber-Core App Initialized");
+    // UPDATED: Name
+    console.log("Mizumo App Initialized");
 
     // ==========================================
     // 0. GLOBAL CART STATE
@@ -23,7 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const modalOverlay = document.getElementById('product-modal-overlay');
     const modalCloseBtn = document.getElementById('modal-close-btn');
-    const productCards = document.querySelectorAll('.product-card');
+    // This query will now find ALL product cards (featured and all-items)
+    const productCards = document.querySelectorAll('.product-card'); 
 
     const modalImage = document.getElementById('modal-image');
     const modalTitle = document.getElementById('modal-title');
@@ -99,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. SLIDE-DOWN SEARCH LOGIC
     // ==========================================
 
-    const searchIcon = document.getElementById('nav-search-icon'); // This ID is now on the icon in .nav-icons
+    const searchIcon = document.getElementById('nav-search-icon');
     const searchPanel = document.getElementById('search-slide-down');
     const searchInput = document.getElementById('slide-search-input');
     const pageContent = document.getElementById('page-content');
@@ -113,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             closeModal();
             closeCart();
-            closeMobileMenu(); // NEW
+            closeMobileMenu(); 
             searchPanel.classList.add('active');
             if(pageContent) pageContent.classList.add('blur-active');
             setTimeout(() => { if(searchInput) searchInput.focus(); }, 100);
@@ -127,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ==========================================
-    // 2.5. MOBILE HAMBURGER MENU LOGIC (NEW)
+    // 2.5. MOBILE HAMBURGER MENU LOGIC
     // ==========================================
     
     const hamburgerIcon = document.getElementById('hamburger-icon');
@@ -167,7 +169,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartBody = document.getElementById('cart-body');
     const cartEmpty = document.getElementById('cart-empty');
     const cartSubtotalEl = document.getElementById('cart-subtotal-price');
-    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+    // This query will now find ALL buttons (featured and all-items)
+    const addToCartButtons = document.querySelectorAll('.add-to-cart-btn'); 
     const cartNotificationBadge = document.getElementById('cart-notification-badge');
 
     // --- Helper Functions ---
@@ -195,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Core Cart Functions ---
     function openCart() {
         closeModal();
-        closeMobileMenu(); // NEW
+        closeMobileMenu(); 
         if (searchPanel && searchPanel.classList.contains('active')) {
             toggleSearch();
         }
@@ -266,9 +269,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === cartOverlay) closeCart();
     });
 
-    // IMPORTANT: Re-run the query to find the new buttons!
-    const allAddToCartButtons = document.querySelectorAll('.add-to-cart-btn');
-    allAddToCartButtons.forEach(button => {
+    // This loop finds ALL .add-to-cart-btn elements on the page
+    // and adds the click listener.
+    addToCartButtons.forEach(button => {
         button.addEventListener('click', (e) => {
             e.stopPropagation(); 
             const card = e.target.closest('.product-card');
@@ -303,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
-            if (mobileMenu && mobileMenu.classList.contains('active')) { // NEW
+            if (mobileMenu && mobileMenu.classList.contains('active')) {
                 closeMobileMenu();
             }
             else if (cartOverlay && cartOverlay.classList.contains('active')) {
@@ -322,7 +325,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!searchPanel || !searchIcon) return;
         if (!searchPanel.classList.contains('active')) return;
 
-        // This selector is now just the icon, not the whole .nav-links
         const isClickOnIcon = searchIcon.contains(event.target);
         const isClickInPanel = searchPanel.contains(event.target);
 
