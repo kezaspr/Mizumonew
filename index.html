@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber-Core Marketplace</title>
+    
+    <!-- Link to your stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Public CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+</head>
+<body>
+
+    <!-- Header -->
+    <nav class="navbar">
+        <a href="#" class="nav-logo">Cyber-Core</a>
+ 
+        <!-- NEW: Hamburger Icon (Mobile Only) -->
+        <div class="hamburger-icon" id="hamburger-icon">
+            <i class="fas fa-bars"></i>
+        </div>
+
+        <!-- Desktop Links -->
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Skins</a>
+            <!-- Search Icon has been MOVED -->
+            <a href="#">Gamepasses</a>
+            <a href="#">Pets</a>
+        </div>
+
+        <div class="nav-icons">
+            <!-- UPDATED: Search Icon now lives here -->
+            <i class="fas fa-search" id="nav-search-icon"></i> 
+            
+            <div class="nav-icon-wrapper" id="cart-icon-wrapper">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-notification-badge" id="cart-notification-badge"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- NEW: Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobile-menu">
+        <button class="modal-close" id="mobile-menu-close">&times;</button>
+        <div class="mobile-links">
+            <a href="#">Home</a>
+            <a href="#">Skins</a>
+            <a href="#">Gamepasses</a>
+            <a href="#">Pets</a>
+        </div>
+    </div>
+
+    <!-- Slide-Down Search Panel -->
+    <div class="search-slide-down" id="search-slide-down">
+        <div class="search-slide-content">
+            <i class="fas fa-search search-icon-large"></i>
+            <input type="text" id="slide-search-input" placeholder="Search for katanas, pets, gamepasses...">
+        </div>
+    </div>
+
+    <!-- Page Content Wrapper (for blurring) -->
+    <div id="page-content">
+
+        <!-- Hero Section -->
+        <header class="hero">
+            <h1>Welcome to Cyber-Core</h1>
+            <p>The #1 marketplace for exclusive Roblox assets. Instantly level up your game with our futuristic items, delivered instantly.</p>
+            <a href="#featured" class="cta-button">Shop Featured Items</a>
+        </header>
+
+        <!-- Featured Products -->
+        <main class="product-grid" id="featured">
+            <h2 class="grid-title">Featured Items</h2>
+            <div class="grid-container">
+                
+                <!-- Product Card 1 -->
+                <div class="product-card" 
+                     data-id="katana-001"
+                     data-title="Neon Katana"
+                     data-category="Weapon Skin"
+                     data-price="R$ 800"
+                     data-image-url="https://via.placeholder.com/100x100/8A2BE2/FFFFFF?text=Katana"
+                     data-description="A limited edition katana forged from pure cyber-energy. This item grants a unique glow effect and a custom swing animation.">
+                    
+                    <div class="product-image" style="background-image: url('https://via.placeholder.com/300x250/8A2BE2/FFFFFF?text=Product+Image'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3 class="product-title">Neon Katana</h3>
+                        <p class="product-category">Weapon Skin</p>
+                        <div class="product-footer">
+                            <span class="product-price">R$ 800</span>
+                            <button class="add-to-cart-btn">Add <i class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Card 2 -->
+                <div class="product-card"
+                     data-id="pet-002"
+                     data-title="Cyber Pet"
+                     data-category="Pet"
+                     data-price="R$ 1,200"
+                     data-image-url="https://via.placeholder.com/100x100/39FF14/1A1A1A?text=Pet"
+                     data-description="A loyal companion from the digital frontier. Provides a speed boost and auto-collects loot for you.">
+                    
+                    <div class="product-image" style="background-image: url('https://via.placeholder.com/300x250/39FF14/1A1A1A?text=Product+Image'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3 class="product-title">Cyber Pet</h3>
+                        <p class="product-category">Pet</p>
+                        <div class="product-footer">
+                            <span class="product-price">R$ 1,200</span>
+                            <button class="add-to-cart-btn">Add <i class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product Card 3 -->
+                <div class="product-card"
+                     data-id="pass-003"
+                     data-title="VIP Gamepass"
+                     data-category="Gamepass"
+                     data-price="R$ 1,500"
+                     data-image-url="https://via.placeholder.com/100x100/8A2BE2/FFFFFF?text=VIP"
+                     data-description="Unlock exclusive access to the VIP lounge, a unique chat tag, a daily R$ bonus, and a 2x R$ multiplier.">
+                    
+                    <div class="product-image" style="background-image: url('https://via.placeholder.com/300x250/8A2BE2/FFFFFF?text=Product+Image'); background-size: cover;"></div>
+                    <div class="product-info">
+                        <h3 class="product-title">VIP Gamepass</h3>
+                        <p class="product-category">Gamepass</p>
+                        <div class="product-footer">
+                            <span class="product-price">R$ 1,500</span>
+                            <button class="add-to-cart-btn">Add <i class="fas fa-shopping-cart"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- .grid-container -->
+        </main> <!-- .product-grid -->
+
+    </div> <!-- #page-content -->
+
+
+    <!-- Product Detail Modal -->
+    <div class="modal-overlay" id="product-modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close-btn">&times;</button>
+            <div class="modal-layout">
+                <div class="modal-image">
+                    <!-- Image source will be set by JavaScript -->
+                    <img src="" alt="Product Image" id="modal-image">
+                </div>
+                <div class="modal-details">
+                    <!-- Title will be set by JavaScript -->
+                    <h2 class="modal-title" id="modal-title"></h2>
+                    <!-- Category will be set by JavaScript -->
+                    <p class="modal-category" id="modal-category"></p>
+                    <!-- Price will be set by JavaScript -->
+                    <span class="modal-price" id="modal-price"></span>
+                    
+                    <h3 class="details-heading">Description</h3>
+                    <!-- Description will be set by JavaScript -->
+                    <p class="modal-description" id="modal-description"></p>
+                    
+                    <h3 class="details-heading">Quantity</h3>
+                    <input type="number" class="modal-quantity" id="modal-quantity" value="1" min="1" max="10">
+                    
+                    <button class="cta-button modal-add-to-cart">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping Cart Overlay & Sidebar -->
+    <div class="cart-overlay-container" id="cart-overlay-container">
+        <div class="cart-sidebar" id="cart-sidebar">
+            
+            <!-- Cart Header -->
+            <div class="cart-header">
+                <h2 class="cart-title">Your Cart</h2>
+                <button class="modal-close" id="cart-close-btn">&times;</button>
+            </div>
+            
+            <!-- Cart Body (where items go) -->
+            <div class="cart-body" id="cart-body">
+                <!-- Empty state -->
+                <div class="cart-empty active" id="cart-empty">
+                    <i class="fas fa-shopping-bag"></i>
+                    <p>Your cart is empty.</p>
+                </div> 
+                <!-- Cart items will be injected here by app.js -->
+            </div>
+            
+            <!-- Cart Footer -->
+            <div class="cart-footer">
+                <div class="cart-subtotal">
+                    <span>Subtotal:</span>
+                    <span id="cart-subtotal-price">R$ 0</span>
+                </div>
+                <button class="cta-button cart-checkout">Go to Checkout</button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Link to your JavaScript file -->
+    <script src="app.js"></script>
+</body>
+</html>
