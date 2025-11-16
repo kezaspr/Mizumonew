@@ -21,10 +21,10 @@ const SUPABASE_ANON_KEY = 'sb_publishable_FgLUWwf9LUxgvJtsI6vP4g_qIY5aqWz'; // G
 let supabase = null;
 try {
     // Check if the variables exist and are not the placeholders
-    if (!SUPABASE_URL || SUPABASE_URL === 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6anhvYW5keGZjbGN2cGZtdXVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMjI4MzgsImV4cCI6MjA3ODc5ODgzOH0.bm-e14AYu3mBj_knLeigA4PIV5QJNLe68SDyuqwhNxs') {
+    if (!SUPABASE_URL || SUPABASE_URL === 'YOUR_PROJECT_URL') {
         throw new Error('Supabase URL is not set. Please update app.js.');
     }
-    if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY === 'sb_publishable_FgLUWwf9LUxgvJtsI6vP4g_qIY5aqWz') {
+    if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY === 'YOUR_ANON_PUBLIC_KEY') {
         throw new Error('Supabase Anon Key is not set. Please update app.js.');
     }
     // Note: The global 'supabase' object comes from the script tag in index.html
