@@ -1,15 +1,3 @@
-/* Mizumo Marketplace App
-    Contains logic for:
-    1. Supabase Integration
-    2. Product Loading
-    3. Global Cart State
-    4. Overlay & Modal Elements
-    5. Helper Functions
-    6. Core App Logic (Menus, Search, Modals, Cart, Checkout)
-    7. Event Listeners
-    8. App Initialization
-*/
-
 // ==========================================
 // 1. SUPABASE INTEGRATION
 // ==========================================
@@ -213,9 +201,9 @@ function toggleSearch() {
 }
 
 /**
- * NEW: Creates HTML for a single search result item.
- * @param {object} product - The product object
- * @returns {string} - HTML string for the search result
+ * Creates HTML for a single search result item.
+ * @param {object} product 
+ * @returns {string}
  */
 function createSearchResultHTML(product) {
     const price = product.price ? formatPrice(product.price) : 'Free';
@@ -234,7 +222,7 @@ function createSearchResultHTML(product) {
 }
 
 /**
- * UPDATED: Filters products and shows results IN the search panel.
+Filters products and shows results IN the search panel.
  */
 function filterProducts() {
     const searchTerm = searchInput.value.toLowerCase();
@@ -265,7 +253,6 @@ function filterProducts() {
 
 // --- Product Modal Logic ---
 /**
- * UPDATED: Can now be called with a product *object* or a card *element*.
  * @param {HTMLElement | object} productOrCard - The card element or a product object
  */
 function openModal(productOrCard) {
@@ -398,7 +385,7 @@ function handlePurchase(e) {
 // ==========================================
 
 /**
- * NEW: Attaches listeners to the dynamic search result items.
+Attaches listeners to the dynamic search result items.
  */
 function attachSearchResultListeners() {
     const searchResultItems = document.querySelectorAll('.search-result-item');
