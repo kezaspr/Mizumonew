@@ -201,13 +201,16 @@ body {
     overflow: hidden; 
 }
 
-/* --- Search Slide-Down Panel --- */
+/* --- Search Slide-Down Panel (UPDATED) --- */
 .search-slide-down {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 300px;
+    /* Make panel taller and scrollable */
+    height: 80vh;
+    max-height: 600px;
+    
     z-index: 2000;
     background-color: rgba(26, 10, 42, 0.95);
     backdrop-filter: blur(15px);
@@ -215,10 +218,12 @@ body {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     transform: translateY(-100%);
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    
+    /* Change layout to hold input and results */
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    padding: 1.5rem;
 }
 
 .search-slide-down.active {
@@ -228,15 +233,26 @@ body {
 .search-slide-content {
     width: 90%;
     max-width: 700px;
-    position: relative;
     text-align: center;
+    /* Allow flex items to grow */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.search-input-wrapper {
+    position: relative;
+    width: 100%;
+    /* Add padding to account for navbar */
+    padding-top: 6rem;
+    flex-shrink: 0; /* Prevent this from shrinking */
 }
 
 .search-slide-content .search-icon-large {
     position: absolute;
     left: 15px;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(calc(3rem)); /* Move icon down */
     font-size: 1.5rem;
     color: var(--secondary-green);
 }
@@ -259,6 +275,91 @@ body {
     box-shadow: 0 0 20px rgba(57, 255, 20, 0.2);
     background: rgba(255, 255, 255, 0.1);
 }
+
+/* --- NEW: Search Results --- */
+.search-results-container {
+    flex-grow: 1; /* Make this take all remaining space */
+    width: 100%;
+    overflow-y: auto;
+    margin-top: 1.5rem;
+    padding-right: 10px; /* Space for scrollbar */
+}
+
+/* Custom scrollbar for results */
+.search-results-container::-webkit-scrollbar {
+    width: 8px;
+}
+.search-results-container::-webkit-scrollbar-track {
+    background: var(--bg-dark-purple);
+    border-radius: 5px;
+}
+.search-results-container::-webkit-scrollbar-thumb {
+    background-color: var(--primary-purple);
+    border-radius: 5px;
+}
+.search-results-container::-webkit-scrollbar-thumb:hover {
+    background-color: var(--secondary-green);
+}
+
+.search-prompt {
+    color: var(--text-light-);
+    opacity: 0.5;
+    margin-top: 2rem;
+    font-size: 1.1rem;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.search-result-item:hover {
+    background-color: var(--card-bg);
+}
+
+.search-result-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    border: 1px solid var(--primary-purple);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.search-result-info {
+    text-align: left;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.search-result-title {
+    font-family: var(--font-headings);
+    font-size: 1.1rem;
+    color: var(--text-light);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.search-result-category {
+    font-size: 0.9rem;
+    color: var(--text-light);
+    opacity: 0.7;
+}
+
+.search-result-price {
+    font-family: var(--font-headings);
+    font-size: 1.1rem;
+    color: var(--secondary-green);
+    padding-left: 1rem;
+    flex-shrink: 0;
+}
+
 
 /* --- Hero Section --- */
 .hero {
@@ -873,5 +974,32 @@ body {
     .modal-.checkout-modal-overlay .modal-content {
         width: 95%;
         padding: 1.5rem;
+    }
+
+    /* 2x2 grid for all items on mobile */
+    #all-items .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    #all-items .product-card .product-info {
+        padding: 1rem;
+    }
+    #all-items .product-card .product-title {
+        font-size: 1rem;
+    }
+    #all-items .product-card .product-category {
+        font-size: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+    #all-items .product-card .product-price {
+        font-size: 1rem;
+    }
+    #all-items .product-card .add-to-cart-btn {
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
     }
 }

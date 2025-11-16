@@ -53,11 +53,20 @@
         </div>
     </div>
 
-    <!-- Slide-Down Search Panel -->
+    <!-- Slide-Down Search Panel (UPDATED) -->
     <div class="search-slide-down" id="search-slide-down">
         <div class="search-slide-content">
-            <i class="fas fa-search search-icon-large"></i>
-            <input type="text" id="slide-search-input" placeholder="Search for items...">
+            <!-- Input and Icon -->
+            <div class="search-input-wrapper">
+                <i class="fas fa-search search-icon-large"></i>
+                <input type="text" id="slide-search-input" placeholder="Search for items..." autocomplete="off">
+            </div>
+
+            <!-- NEW: Search Results Container -->
+            <div class="search-results-container" id="search-results-container">
+                <!-- Search results will be injected here by app.js -->
+                <p class="search-prompt">Start typing to see results...</p>
+            </div>
         </div>
     </div>
 
@@ -74,10 +83,7 @@
         <!-- Featured Products -->
         <main class="product-grid" id="featured">
             <h2 class="grid-title">Featured Items</h2>
-
-            <!-- UPDATED: This container will be filled by app.js -->
             <div class="scroll-container" id="featured-products-container">
-                <!-- NEW: Loading Spinner -->
                 <div class="loader"></div>
             </div>
         </main> 
@@ -85,10 +91,7 @@
         <!-- "All Items" Section -->
         <main class="product-grid" id="all-items">
             <h2 class="grid-title">All Items</h2>
-
-            <!-- UPDATED: This container will be filled by app.js -->
             <div class="grid-container" id="all-products-container">
-                <!-- NEW: Loading Spinner -->
                 <div class="loader"></div>
             </div>
         </main> 

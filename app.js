@@ -1,61 +1,50 @@
 /* Mizumo Marketplace App
     Contains logic for:
-    1. Supabase Integration (NEW)
-    2. Product Detail Modal
-    3. Slide-Down Search
-    4. Mobile Hamburger Menu
-    5. Shopping Cart Sidebar
-    6. Checkout Modal
-    7. Global Listeners
+    1. Supabase Integration
+    2. Product Loading
+    3. Global Cart State
+    4. Overlay & Modal Elements
+    5. Helper Functions
+    6. Core App Logic (Menus, Search, Modals, Cart, Checkout)
+    7. Event Listeners
+    8. App Initialization
 */
 
 // ==========================================
-// 1. SUPABASE INTEGRATION (NEW)
+// 1. SUPABASE INTEGRATION
 // ==========================================
 
-// --- PASTE YOUR KEYS HERE ---
-const SUPABASE_URL = 'https://uzjxoandxfclcvpfmuun.supabase.co'; // <--- PASTE YOUR URL HERE
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6anhvYW5keGZjbGN2cGZtdXVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMjI4MzgsImV4cCI6MjA3ODc5ODgzOH0.bm-e14AYu3mBj_knLeigA4PIV5QJNLe68SDyuqwhNxs'; // <--- PASTE YOUR ANON KEY HERE
+const SUPABASE_URL = 'https://uzjxoandxfclcvpfmuun.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6anhvYW5keGZjbGN2cGZtdXVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyMjI4MzgsImV4cCI6MjA3ODc5ODgzOH0.bm-e14AYu3mBj_knLeigA4PIV5QJNLe68SDyuqwhNxs';
 
-// --- Initialize Supabase Client ---
 let supabase = null;
 try {
-  // Check if the variables exist and are not the placeholders
   if (!SUPABASE_URL || SUPABASE_URL === 'YOUR_PROJECT_URL') {
     throw new Error('Supabase URL is not set. Please update app.js.');
   }
   if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY === 'YOUR_ANON_PUBLIC_KEY') {
     throw new Error('Supabase Anon Key is not set. Please update app.js.');
   }
-  // Note: The global 'supabase' object comes from the script tag in index.html
   supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   console.log('Mizumo App Initialized with Supabase!');
 
 } catch (error) {
     console.error(error.message);
-    // Alert the user if the keys are not set
     const featuredContainer = document.getElementById('featured-products-container');
     if(featuredContainer) featuredContainer.innerHTML = `<p style="color:red; text-align:center;">Error: Database not connected. Please check Supabase keys in app.js.</p>`;
 }
 
 // ==========================================
-// 2. PRODUCT LOADING (NEW)
+// 2. PRODUCT LOADING
 // ==========================================
 let allProducts = []; // Store all products in a global array
 const featuredContainer = document.getElementById('featured-products-container');
 const allProductsContainer = document.getElementById('all-products-container');
 
-/**
- * Creates the HTML for a single product card
- * @param {object} product - The product data from Supabase
- * @returns {string} - The HTML string for the product card
- */
 function createProductCardHTML(product) {
-    // Set default values in case data is missing
     const price = product.price ? `Rp. ${product.price.toLocaleString()}` : 'Free';
     const imageUrl = product.image_url || `https://via.placeholder.com/300x250/8A2BE2/FFFFFF?text=${product.title.replace(' ', '+')}`;
     
-    // We use data- attributes to store all product info on the card itself
     return `
     <div class="product-card" 
          data-id="${product.id}"
@@ -78,30 +67,23 @@ function createProductCardHTML(product) {
     `;
 }
 
-/**
- * Fetches products from Supabase and renders them to the page
- */
 async function loadProducts() {
-    if (!supabase) return; // Don't run if Supabase isn't connected
+    if (!supabase) return;
 
     try {
-        // Fetch all products from the 'products' table
         const { data, error } = await supabase
-            .from('products') // Make sure your table is named 'products'
+            .from('products')
             .select('*')
             .order('created_at', { ascending: false });
 
         if (error) {
-            // This will throw the specific Supabase error
             throw new Error(`Supabase fetch failed: ${error.message}`);
         }
 
-        // Clear loading spinners
         featuredContainer.innerHTML = '';
         allProductsContainer.innerHTML = '';
 
-        // Render products
-        allProducts = data; // Save all products
+        allProducts = data;
         const featuredProducts = data.filter(product => product.featured === true);
 
         if (featuredProducts.length > 0) {
@@ -120,12 +102,10 @@ async function loadProducts() {
             allProductsContainer.innerHTML = '<p style="text-align:center;">No products found.</p>';
         }
 
-        // IMPORTANT: Attach listeners *after* products are on the page
         attachAllEventListeners();
 
     } catch (error) {
         console.error(error.message);
-        // UPDATED: This will now show the REAL error message on your page
         featuredContainer.innerHTML = `<p style="color:red; text-align:center;">Error: ${error.message}</p>`;
         allProductsContainer.innerHTML = `<p style="color:red; text-align:center;">Error: ${error.message}</p>`;
     }
@@ -151,6 +131,7 @@ const mobileMenuClose = document.getElementById('mobile-menu-close');
 const searchIcon = document.getElementById('nav-search-icon');
 const searchPanel = document.getElementById('search-slide-down');
 const searchInput = document.getElementById('slide-search-input');
+const searchResultsContainer = document.getElementById('search-results-container'); // NEW
 
 // Product Modal
 const modalOverlay = document.getElementById('product-modal-overlay');
@@ -199,6 +180,9 @@ function closeAllOverlays() {
     if (modalOverlay) modalOverlay.classList.remove('active');
     if (checkoutModal) checkoutModal.classList.remove('active');
     if (pageContent) pageContent.classList.remove('blur-active');
+    // Clear search results when closing
+    if (searchResultsContainer) searchResultsContainer.innerHTML = '<p class="search-prompt">Start typing to see results...</p>';
+    if (searchInput) searchInput.value = '';
 }
 
 // ==========================================
@@ -228,44 +212,97 @@ function toggleSearch() {
     }
 }
 
+/**
+ * NEW: Creates HTML for a single search result item.
+ * @param {object} product - The product object
+ * @returns {string} - HTML string for the search result
+ */
+function createSearchResultHTML(product) {
+    const price = product.price ? formatPrice(product.price) : 'Free';
+    const imageUrl = product.image_url || `https://via.placeholder.com/100x100/8A2BE2/FFFFFF?text=${product.title.replace(' ', '+')}`;
+
+    return `
+    <div class="search-result-item" data-id="${product.id}">
+        <img src="${imageUrl}" alt="${product.title}" class="search-result-image">
+        <div class="search-result-info">
+            <div class="search-result-title">${product.title}</div>
+            <div class="search-result-category">${product.category}</div>
+        </div>
+        <div class="search-result-price">${price}</div>
+    </div>
+    `;
+}
+
+/**
+ * UPDATED: Filters products and shows results IN the search panel.
+ */
 function filterProducts() {
     const searchTerm = searchInput.value.toLowerCase();
-    let productsFound = 0;
+    
+    if (searchTerm.length === 0) {
+        searchResultsContainer.innerHTML = '<p class="search-prompt">Start typing to see results...</p>';
+        return;
+    }
 
-    allProductsContainer.innerHTML = ''; // Clear the grid
+    let productsFound = 0;
+    let resultsHTML = '';
 
     allProducts.forEach(product => {
         if (product.title.toLowerCase().includes(searchTerm)) {
-            allProductsContainer.innerHTML += createProductCardHTML(product);
+            resultsHTML += createSearchResultHTML(product);
             productsFound++;
         }
     });
 
     if (productsFound === 0) {
-        allProductsContainer.innerHTML = `<p style="text-align:center;">No products found matching "${searchTerm}".</p>`;
+        searchResultsContainer.innerHTML = `<p class="search-prompt">No products found matching "${searchTerm}".</p>`;
+    } else {
+        searchResultsContainer.innerHTML = resultsHTML;
+        // Attach listeners to the new search results
+        attachSearchResultListeners();
     }
-
-    // Re-attach listeners to the new cards
-    attachProductCardListeners();
 }
 
 // --- Product Modal Logic ---
-function openModal(card) {
+/**
+ * UPDATED: Can now be called with a product *object* or a card *element*.
+ * @param {HTMLElement | object} productOrCard - The card element or a product object
+ */
+function openModal(productOrCard) {
     closeAllOverlays();
-    // Get data from the card's data-attributes
-    const data = card.dataset;
-    modalImage.src = data.imageUrl || `https://via.placeholder.com/600x600/8A2BE2/FFFFFF?text=${data.title.replace(' ', '+')}`;
-    modalTitle.textContent = data.title;
-    modalCategory.textContent = data.category;
-    modalPrice.textContent = data.price;
-    modalDescription.textContent = data.description;
+    
+    let productData;
+
+    // Check if it's an object (from search results) or an element (from card click)
+    if (productOrCard.dataset) {
+        // It's a card element
+        productData = productOrCard.dataset;
+    } else {
+        // It's a product object
+        productData = {
+            id: productOrCard.id,
+            title: productOrCard.title,
+            category: productOrCard.category,
+            price: formatPrice(productOrCard.price),
+            imageUrl: productOrCard.image_url,
+            description: productOrCard.description
+        };
+    }
+
+    // Get data from the data-attributes
+    modalImage.src = productData.imageUrl || `https://via.placeholder.com/600x600/8A2BE2/FFFFFF?text=${productData.title.replace(' ', '+')}`;
+    modalTitle.textContent = productData.title;
+    modalCategory.textContent = productData.category;
+    modalPrice.textContent = productData.price;
+    modalDescription.textContent = productData.description;
     modalQuantityInput.value = 1;
 
     // Store card data on the modal button
-    modalAddToCartBtn.dataset.id = data.id;
-    modalAddToCartBtn.dataset.title = data.title;
-    modalAddToCartBtn.dataset.price = data.price;
-    modalAddToCartBtn.dataset.imageUrl = data.imageUrl; // Use the small image for cart
+    modalAddToCartBtn.dataset.id = productData.id;
+    modalAddToCartBtn.dataset.title = productData.title;
+    modalAddToCartBtn.dataset.price = productData.price;
+    // Use the small image for cart
+    modalAddToCartBtn.dataset.imageUrl = productData.imageUrl; 
 
     modalOverlay.classList.add('active');
 }
@@ -288,7 +325,7 @@ function updateCartNotification() {
 }
 
 function addToCart(item) {
-    const existingItem = cart.find(cartItem => cartItem.id === item.id);
+    const existingItem = cart.find(cartItem => String(cartItem.id) === String(item.id));
     if (existingItem) {
         existingItem.quantity += item.quantity || 1;
     } else {
@@ -359,16 +396,33 @@ function handlePurchase(e) {
 // ==========================================
 // 7. EVENT LISTENERS
 // ==========================================
+
 /**
- * Attaches listeners to all product cards and their buttons.
- * Must be called *after* products are rendered.
+ * NEW: Attaches listeners to the dynamic search result items.
  */
+function attachSearchResultListeners() {
+    const searchResultItems = document.querySelectorAll('.search-result-item');
+    searchResultItems.forEach(item => {
+        item.addEventListener('click', () => {
+            // Find the full product object from the 'allProducts' array
+            const productId = item.dataset.id;
+            const product = allProducts.find(p => String(p.id) === String(productId));
+            if (product) {
+                // Pass the *object* to openModal
+                openModal(product);
+            } else {
+                console.error("Could not find product with ID:", productId);
+            }
+        });
+    });
+}
+
 function attachProductCardListeners() {
     const productCards = document.querySelectorAll('.product-card');
     productCards.forEach(card => {
         card.addEventListener('click', (e) => {
-            // Don't open modal if "Add to Cart" was clicked
             if (!e.target.closest('.add-to-cart-btn')) {
+                // Pass the *card element* to openModal
                 openModal(card);
             }
         });
@@ -391,12 +445,8 @@ function attachProductCardListeners() {
     });
 }
 
-/**
- * Attaches all static listeners (nav, overlays, etc.)
- */
 function attachAllEventListeners() {
-    // --- Attach Product Listeners ---
-    attachProductCardListeners(); // For products loaded initially
+    attachProductCardListeners();
 
     // --- Mobile Menu ---
     hamburgerIcon.addEventListener('click', toggleMobileMenu);
@@ -407,7 +457,7 @@ function attachAllEventListeners() {
 
     // --- Search ---
     searchIcon.addEventListener('click', toggleSearch);
-    searchInput.addEventListener('input', filterProducts); // Filter as you type
+    searchInput.addEventListener('input', filterProducts); // UPDATED
 
     // --- Product Modal ---
     modalCloseBtn.addEventListener('click', closeAllOverlays);
@@ -465,7 +515,6 @@ function attachAllEventListeners() {
 // ==========================================
 // 8. APP INITIALIZATION
 // ==========================================
-// Only run the app if Supabase was initialized
 if (supabase) {
-    loadProducts(); // Load products on page load
+    loadProducts();
 }
