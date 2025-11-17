@@ -439,10 +439,12 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         showAuthMessage('Signing up...', 'success');
         
-        const email = e.target.email.value;
-        const password = e.target.password.value;
-        const confirmPassword = e.target.confirmPassword.value;
-        const username = e.target.username.value;
+        // --- THIS IS THE FIX ---
+        // Get values by ID instead of from e.target
+        const email = document.getElementById('signup-email').value;
+        const password = document.getElementById('signup-password').value;
+        const confirmPassword = document.getElementById('signup-confirm-password').value;
+        const username = document.getElementById('signup-username').value;
 
         if (password !== confirmPassword) {
             showAuthMessage('Passwords do not match.', 'error');
@@ -473,8 +475,10 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         showAuthMessage('Logging in...', 'success');
         
-        const email = e.target.email.value;
-        const password = e.target.password.value;
+        // --- THIS IS THE FIX ---
+        // Get values by ID instead of from e.target
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
 
         const { data, error } = await supabase.auth.signInWithPassword({
             email: email,
