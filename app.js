@@ -1,17 +1,3 @@
-/* Mizumo Marketplace App
-    Contains logic for:
-    1. Supabase Integration
-    2. Product Loading
-    3. Global Cart State
-    4. Element Variables (NEW)
-    5. Helper Functions
-    6. Core App Logic (Mobile, Search, Modal, Cart, Checkout, Auth)
-    7. Event Listeners
-    8. App Initialization
-*/
-
-// --- THIS IS THE FIX ---
-// We wrap all code in this event listener
 document.addEventListener('DOMContentLoaded', () => {
 
     // ==========================================
@@ -119,12 +105,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // ==========================================
-    // 3. GLOBAL CART STATE
+    // 3. GLOBAL CART & USER STATE (NEW)
     // ==========================================
     let cart = []; 
+    let currentUser = null;
+    let userCartRowId = null; // This will store the 'id' of the user's cart row in the db
 
     // ==========================================
-    // 4. ELEMENT VARIABLES (NEW STRUCTURE)
+    // 4. ELEMENT VARIABLES
     // ==========================================
     // We declare them here, but assign them inside a function
     let pageContent, hamburgerIcon, mobileMenu, mobileMenuClose, searchIcon, 
@@ -140,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     /**
      * Finds all HTML elements and assigns them to variables.
-     * This is the fix for the "null" error.
      */
     function initializeDOMElements() {
         pageContent = document.getElementById('page-content');
@@ -267,10 +254,8 @@ document.addEventListener('DOMContentLoaded', () => {
             searchResultsContainer.innerHTML = '<p class="search-prompt">Start typing to see results...</p>';
             return;
         }
-
         let productsFound = 0;
         let resultsHTML = '';
-
         allProducts.forEach(product => {
             if (product.title.toLowerCase().includes(searchTerm)) {
                 resultsHTML += createSearchResultHTML(product);
@@ -289,9 +274,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Product Modal Logic ---
     function openModal(productOrCard) {
         closeAllOverlays();
-        
         let productData;
-
         if (productOrCard.dataset) {
             productData = productOrCard.dataset;
         } else {
@@ -304,23 +287,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 description: productOrCard.description
             };
         }
-
         modalImage.src = productData.imageUrl || `https://via.placeholder.com/600x600/8A2BE2/FFFFFF?text=${productData.title.replace(' ', '+')}`;
         modalTitle.textContent = productData.title;
         modalCategory.textContent = productData.category;
         modalPrice.textContent = productData.price;
         modalDescription.textContent = productData.description;
         modalQuantityInput.value = 1;
-
         modalAddToCartBtn.dataset.id = productData.id;
         modalAddToCartBtn.dataset.title = productData.title;
         modalAddToCartBtn.dataset.price = productData.price;
         modalAddToCartBtn.dataset.imageUrl = productData.imageUrl; 
-
         modalOverlay.classList.add('active');
     }
 
-    // --- Cart Logic ---
+    // --- Cart Logic (HEAVILY UPDATED) ---
     function openCart() {
         closeAllOverlays();
         cartOverlay.classList.add('active');
@@ -343,16 +323,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (existingItem) {
             existingItem.quantity += item.quantity || 1;
         } else {
-            cart.push({ ...item, quantity: item.quantity || 1 });
+            // Ensure we are adding all necessary fields, especially 'id'
+            cart.push({ 
+                id: item.id,
+                title: item.title,
+                price: item.price,
+                imageUrl: item.imageUrl,
+                quantity: item.quantity || 1 
+            });
         }
         renderCart();
         updateCartNotification();
+        saveCart(); // NEW: Save cart on change
     }
 
     function removeFromCart(itemId) {
         cart = cart.filter(item => String(item.id) !== String(itemId));
         renderCart();
         updateCartNotification();
+        saveCart(); // NEW: Save cart on change
     }
 
     function renderCart() {
@@ -368,7 +357,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const itemPriceNumber = parsePrice(item.price);
                 const itemTotal = itemPriceNumber * item.quantity;
                 subtotal += itemTotal;
-
                 const cartItemHTML = `
                 <div class="cart-item">
                     <img src="${item.imageUrl}" alt="${item.title}" class="cart-item-image">
@@ -386,6 +374,137 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- NEW: Persistent Cart Functions ---
+
+    /**
+     * Saves the cart to Supabase (if logged in) or localStorage (if guest).
+     */
+    async function saveCart() {
+        // Sanitize cart data before saving, ensure 'id' is present
+        const sanitizedCart = cart.map(item => ({
+            id: item.id,
+            title: item.title,
+            price: item.price,
+            imageUrl: item.imageUrl,
+            quantity: item.quantity
+        }));
+
+        if (currentUser) {
+            // User is logged in, save to Supabase
+            if (userCartRowId) {
+                // User already has a cart row, UPDATE it
+                console.log("Saving (update) cart to Supabase:", sanitizedCart);
+                const { error } = await supabase
+                    .from('user_carts')
+                    .update({ cart_data: sanitizedCart })
+                    .eq('id', userCartRowId);
+                if (error) console.error('Error updating cart:', error.message);
+            } else {
+                // User does not have a cart row, INSERT one
+                console.log("Saving (insert) cart to Supabase:", sanitizedCart);
+                const { data, error } = await supabase
+                    .from('user_carts')
+                    .insert({ user_id: currentUser.id, cart_data: sanitizedCart })
+                    .select('id')
+                    .single(); // Get the new row ID back
+                if (error) {
+                    console.error('Error creating cart:', error.message);
+                } else if (data) {
+                    userCartRowId = data.id; // Save the new row ID
+                    console.log("Created new cart row with id:", userCartRowId);
+                }
+            }
+        } else {
+            // User is a guest, save to localStorage
+            console.log("Saving cart to localStorage:", sanitizedCart);
+            localStorage.setItem('guestCart', JSON.stringify(sanitizedCart));
+        }
+    }
+
+    /**
+     * Loads the cart from Supabase (if logged in) or localStorage (if guest).
+     */
+    async function loadCart() {
+        if (currentUser) {
+            // User is logged in, load from Supabase
+            console.log("Loading cart from Supabase for user:", currentUser.id);
+            const { data, error } = await supabase
+                .from('user_carts')
+                .select('id, cart_data')
+                .eq('user_id', currentUser.id)
+                .single(); // Get the user's single cart row
+
+            if (data && data.cart_data) {
+                cart = data.cart_data;
+                userCartRowId = data.id;
+                console.log("Cart loaded from Supabase. Row ID:", userCartRowId, "Cart:", cart);
+            } else if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+                console.error('Error loading cart:', error.message);
+                cart = [];
+            } else {
+                // No row found, user has an empty cart
+                console.log("No cart row found for user. Setting empty cart.");
+                cart = [];
+                userCartRowId = null;
+            }
+        } else {
+            // User is a guest, load from localStorage
+            console.log("Loading cart from localStorage for guest.");
+            try {
+                const guestCart = localStorage.getItem('guestCart');
+                cart = guestCart ? JSON.parse(guestCart) : [];
+                console.log("Guest cart loaded:", cart);
+            } catch (e) {
+                console.error('Error parsing guest cart:', e);
+                cart = [];
+            }
+        }
+        // Render the loaded cart
+        renderCart();
+        updateCartNotification();
+    }
+
+    /**
+     * Merges the guest cart (localStorage) with the user's cart (Supabase) on login.
+     */
+    async function mergeAndLoadCarts() {
+        let guestCart = [];
+        try {
+            const guestCartData = localStorage.getItem('guestCart');
+            guestCart = guestCartData ? JSON.parse(guestCartData) : [];
+            console.log("Merging guest cart:", guestCart);
+        } catch (e) {
+            console.error('Error parsing guest cart for merge:', e);
+        }
+
+        // Load the user's saved cart from the database
+        // This populates the global 'cart' array
+        await loadCart(); 
+
+        if (guestCart.length > 0) {
+            console.log("Guest cart has items. Merging with user cart:", cart);
+            // If the guest had items, merge them
+            guestCart.forEach(guestItem => {
+                const existingItem = cart.find(userItem => String(userItem.id) === String(guestItem.id));
+                if (existingItem) {
+                    existingItem.quantity += guestItem.quantity; // Add quantities
+                } else {
+                    cart.push(guestItem); // Add new item
+                }
+            });
+
+            // Clear the local storage guest cart
+            localStorage.removeItem('guestCart');
+            // Save the newly merged cart to the database
+            await saveCart();
+            // Re-render
+            renderCart();
+            updateCartNotification();
+            console.log("Merge complete. New cart:", cart);
+        }
+    }
+
+
     // --- Checkout Logic ---
     function openCheckout() {
         if (cart.length === 0) return;
@@ -394,10 +513,11 @@ document.addEventListener('DOMContentLoaded', () => {
         checkoutModal.classList.add('active');
     }
 
-    function handlePurchase(e) {
+    async function handlePurchase(e) {
         e.preventDefault(); 
         closeAllOverlays();
-        cart = [];
+        cart = []; // Empty the cart
+        await saveCart(); // NEW: Save the empty cart
         renderCart();
         updateCartNotification();
         checkoutForm.reset();
@@ -408,14 +528,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
     }
 
-    // --- Auth Logic ---
+    // --- Auth Logic (UPDATED) ---
     function toggleAuthView(e) {
         e.preventDefault();
         if (!authMessage || !loginForm || !signupForm || !authTitle || !authToggleLink) return;
-        
         authMessage.textContent = '';
         authMessage.className = 'auth-message';
-        
         if (loginForm.style.display === 'none') {
             loginForm.style.display = 'flex';
             signupForm.style.display = 'none';
@@ -439,8 +557,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         showAuthMessage('Signing up...', 'success');
         
-        // --- THIS IS THE FIX ---
-        // Get values by ID instead of from e.target
         const email = document.getElementById('signup-email').value;
         const password = document.getElementById('signup-password').value;
         const confirmPassword = document.getElementById('signup-confirm-password').value;
@@ -475,8 +591,6 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         showAuthMessage('Logging in...', 'success');
         
-        // --- THIS IS THE FIX ---
-        // Get values by ID instead of from e.target
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
 
@@ -489,27 +603,31 @@ document.addEventListener('DOMContentLoaded', () => {
             showAuthMessage(error.message, 'error');
         } else if (data.user) {
             showAuthMessage('Login successful!', 'success');
+            currentUser = data.user; // NEW: Set current user
+            await mergeAndLoadCarts(); // NEW: Load and merge cart
             updateUIForUser(data.user);
             setTimeout(closeAllOverlays, 1000);
         }
     }
 
     async function handleLogout() {
+        await saveCart(); // NEW: Save cart before logging out
         const { error } = await supabase.auth.signOut();
         if (error) {
             console.error('Error logging out:', error.message);
         } else {
+            currentUser = null; // NEW: Clear user
+            userCartRowId = null;
+            await loadCart(); // NEW: Load guest cart (which might be empty)
             updateUIForUser(null);
         }
     }
 
     function updateUIForUser(user) {
-        // This is the guard clause that was logging the error
         if (!authButton || !userProfile || !userLabel) {
             console.warn('Auth UI elements not found. Skipping UI update.');
             return; 
         }
-
         if (user) {
             authButton.style.display = 'none';
             userProfile.style.display = 'flex';
@@ -524,10 +642,13 @@ document.addEventListener('DOMContentLoaded', () => {
     async function checkUserSession() {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
+            currentUser = session.user; // NEW: Set current user
             updateUIForUser(session.user);
         } else {
+            currentUser = null; // NEW: Ensure user is null
             updateUIForUser(null);
         }
+        await loadCart(); // NEW: Load cart AFTER checking session
     }
 
 
@@ -552,15 +673,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function attachAllEventListeners() {
         const containers = [featuredContainer, allProductsContainer];
-        
         containers.forEach(container => {
             if (!container) return;
-            
             container.addEventListener('click', (e) => {
                 const card = e.target.closest('.product-card');
                 if (!card) return; 
                 const isAddToCartButton = e.target.closest('.add-to-cart-btn');
-                
                 if (isAddToCartButton) {
                     e.stopPropagation();
                     const item = {
@@ -579,7 +697,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function attachStaticListeners() {
-        // --- Mobile Menu ---
         if (hamburgerIcon) hamburgerIcon.addEventListener('click', toggleMobileMenu);
         if (mobileMenuClose) mobileMenuClose.addEventListener('click', closeAllOverlays);
         if (mobileMenu) {
@@ -587,12 +704,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 link.addEventListener('click', closeAllOverlays);
             });
         }
-
-        // --- Search ---
         if (searchIcon) searchIcon.addEventListener('click', toggleSearch);
         if (searchInput) searchInput.addEventListener('input', filterProducts);
-
-        // --- Product Modal ---
         if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeAllOverlays);
         if (modalOverlay) {
             modalOverlay.addEventListener('click', (e) => {
@@ -612,8 +725,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 closeAllOverlays();
             });
         }
-
-        // --- Cart ---
         if (cartIconWrapper) cartIconWrapper.addEventListener('click', openCart);
         if (cartCloseBtn) cartCloseBtn.addEventListener('click', closeAllOverlays);
         if (cartOverlay) {
@@ -628,8 +739,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-
-        // --- Checkout ---
         if (checkoutBtn) checkoutBtn.addEventListener('click', openCheckout);
         if (checkoutCloseBtn) checkoutCloseBtn.addEventListener('click', closeAllOverlays);
         if (checkoutModal) {
@@ -638,8 +747,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         if (checkoutForm) checkoutForm.addEventListener('submit', handlePurchase);
-
-        // --- Auth ---
         if (authButton) {
             authButton.addEventListener('click', () => {
                 closeAllOverlays();
@@ -647,20 +754,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         if (authCloseBtn) authCloseBtn.addEventListener('click', closeAllOverlays);
-        
-        // This was removed per your request:
-        // if (authModal) { ... }
-
         if (authToggleLink) authToggleLink.addEventListener('click', toggleAuthView);
         if (loginForm) loginForm.addEventListener('submit', handleLogin);
         if (signupForm) signupForm.addEventListener('submit', handleSignUp);
         if (logoutButton) logoutButton.addEventListener('click', handleLogout);
-
-        // --- Global Listeners ---
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeAllOverlays();
         });
-        
         document.addEventListener('click', (e) => {
             if (searchPanel && searchPanel.classList.contains('active')) {
                 const isClickOnIcon = searchIcon.contains(e.target);
@@ -672,26 +772,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
     // ==========================================
     // 8. APP INITIALIZATION
     // ==========================================
     
-    // --- THIS IS THE NEW STRUCTURE ---
-    
-    // 1. Find all the elements on the page first.
     initializeDOMElements();
-    
-    // 2. Attach all listeners to those elements.
     attachStaticListeners();
 
-    // 3. Connect to database and load dynamic content.
     if (supabase) {
-        loadProducts(); // This will call attachAllEventListeners() when done
-        checkUserSession();
+        loadProducts(); // This will call attachAllEventListeners()
+        checkUserSession(); // This will call loadCart()
+    } else {
+        loadCart(); // Load guest cart even if Supabase fails
     }
-    
-    // 4. Render the cart (to show "Rp. 0")
-    renderCart();
 
-}); // --- THIS IS THE END OF THE DOMContentLoaded WRAPPER ---
+});
