@@ -3,13 +3,15 @@
     1. Supabase Integration
     2. Product Loading
     3. Global Cart State
-    4. Overlays & Modals
+    4. Element Variables (NEW)
     5. Helper Functions
     6. Core App Logic (Mobile, Search, Modal, Cart, Checkout, Auth)
     7. Event Listeners
     8. App Initialization
 */
 
+// --- THIS IS THE FIX ---
+// We wrap all code in this event listener
 document.addEventListener('DOMContentLoaded', () => {
 
     // ==========================================
@@ -22,17 +24,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let supabase = null;
     try {
+      // Check if the variables exist and are not the placeholders
       if (!SUPABASE_URL || SUPABASE_URL === 'YOUR_PROJECT_URL') {
         throw new Error('Supabase URL is not set. Please update app.js.');
       }
       if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY === 'YOUR_ANON_PUBLIC_KEY') {
         throw new Error('SupABASE Anon Key is not set. Please update app.js.');
       }
+      // Note: The global 'supabase' object comes from the script tag in index.html
       supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       console.log('Mizumo App Initialized with Supabase!');
 
     } catch (error) {
         console.error(error.message);
+        // We find the element here just for the error message
         const el = document.getElementById('featured-products-container');
         if(el) el.innerHTML = `<p style="color:red; text-align:center;">Error: Database not connected. Please check Supabase keys in app.js.</p>`;
     }
@@ -119,8 +124,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let cart = []; 
 
     // ==========================================
-    // 4. ELEMENT VARIABLES (Initialized in a function)
+    // 4. ELEMENT VARIABLES (NEW STRUCTURE)
     // ==========================================
+    // We declare them here, but assign them inside a function
     let pageContent, hamburgerIcon, mobileMenu, mobileMenuClose, searchIcon, 
         searchPanel, searchInput, searchResultsContainer, modalOverlay, 
         modalCloseBtn, modalImage, modalTitle, modalCategory, modalPrice, 
@@ -349,6 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderCart() {
+        if (!cartBody || !cartEmpty || !cartSubtotalEl) return;
         cartBody.innerHTML = '';
         if (cart.length === 0) {
             cartEmpty.classList.add('active');
@@ -403,6 +410,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Auth Logic ---
     function toggleAuthView(e) {
         e.preventDefault();
+        if (!authMessage || !loginForm || !signupForm || !authTitle || !authToggleLink) return;
+        
         authMessage.textContent = '';
         authMessage.className = 'auth-message';
         
@@ -420,6 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showAuthMessage(message, type = 'error') {
+        if (!authMessage) return;
         authMessage.textContent = message;
         authMessage.className = `auth-message ${type}`;
     }
@@ -489,25 +499,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function updateUIForUser(user) {
-        // We re-find the elements here just in case, removing the guard clause
-        const authBtn = document.getElementById('auth-button');
-        const profile = document.getElementById('user-profile');
-        const label = document.getElementById('user-label');
-
-        // This check is still good, in case they are missing from HTML
-        if (!authBtn || !profile || !label) {
+        // The guard clause is still here, but now it checks the variables
+        // that were assigned in initializeDOMElements()
+        if (!authButton || !userProfile || !userLabel) {
             console.warn('Auth UI elements not found. Skipping UI update.');
             return; 
         }
 
         if (user) {
-            authBtn.style.display = 'none';
-            profile.style.display = 'flex';
-            label.textContent = user.user_metadata?.username || user.email;
+            authButton.style.display = 'none';
+            userProfile.style.display = 'flex';
+            userLabel.textContent = user.user_metadata?.username || user.email;
         } else {
-            authBtn.style.display = 'block';
-            profile.style.display = 'none';
-            label.textContent = '';
+            authButton.style.display = 'block';
+            userProfile.style.display = 'none';
+            userLabel.textContent = '';
         }
     }
 
