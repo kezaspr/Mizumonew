@@ -1,22 +1,6 @@
-/* Mizumo Marketplace App
-    Contains logic for:
-    1. Supabase Integration
-    2. Product Loading
-    3. Global Cart State
-    4. Overlays & Modals
-    5. Helper Functions
-    6. Core App Logic (Mobile, Search, Modal, Cart, Checkout, Auth)
-    7. Event Listeners
-    8. App Initialization
-*/
-
-// ==========================================
-// 1. SUPABASE INTEGRATION
-// ==========================================
-
 // --- PASTE YOUR KEYS HERE ---
-const SUPABASE_URL = 'YOUR_PROJECT_URL';
-const SUPABASE_ANON_KEY = 'YOUR_ANON_PUBLIC_KEY';
+const SUPABASE_URL = 'https://uzjxoandxfclcvpfmuun.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_FgLUWwf9LUxgvJtsI6vP4g_qIY5aqWz';
 
 let supabase = null;
 try {
