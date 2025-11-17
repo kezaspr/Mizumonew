@@ -449,7 +449,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // --- THIS IS THE FIXED LINE (REMOVED THE UNDERSCORE) ---
         const { data, error } = await supabase.auth.signUp({
             email: email,
             password: password,
@@ -645,13 +644,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (authCloseBtn) authCloseBtn.addEventListener('click', closeAllOverlays);
         
-        // --- THIS BLOCK WAS REMOVED PER YOUR REQUEST ---
-        // if (authModal) {
-        //     authModal.addEventListener('click', (e) => {
-        //         if (e.target === authModal) closeAllOverlays();
-        //     });
-        // }
-        // --- END OF REMOVED BLOCK ---
+        // This was removed per your request:
+        // if (authModal) { ... }
 
         if (authToggleLink) authToggleLink.addEventListener('click', toggleAuthView);
         if (loginForm) loginForm.addEventListener('submit', handleLogin);
